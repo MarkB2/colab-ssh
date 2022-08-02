@@ -11,6 +11,7 @@ from .utils.expose_env_variable import expose_env_variable
 
 def launch_ssh(token,
                password="",
+               port=22,
                publish=True,
                verbose=False,
                region="us",
@@ -60,7 +61,7 @@ we highly recommend that update your code by following this documentation https:
   expose_env_variable("TPU_NAME")
   expose_env_variable("XRT_TPU_CONFIG")
 
-  os.system('/usr/sbin/sshd -D &')
+  os.system(f'/usr/sbin/sshd -D -p {port}&')
 
   extra_params = []
   if(remote_addr):
@@ -68,8 +69,8 @@ we highly recommend that update your code by following this documentation https:
 
   # Create tunnel
   proc = Popen(shlex.split(
-      './ngrok tcp --authtoken {} --region {} {} 22'.format(
-          token, region, " ".join(extra_params))
+      './ngrok tcp --authtoken {} --region {} {} {}'.format(
+          token, region, " ".join(extra_params), port)
   ), stdout=PIPE)
 
   time.sleep(4)
